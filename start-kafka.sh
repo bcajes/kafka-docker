@@ -1,9 +1,16 @@
 #!/bin/bash
+#modified to run with marathon -bcajes
 
 if [[ -z "$KAFKA_ADVERTISED_PORT" ]]; then
-    export KAFKA_ADVERTISED_PORT=$(docker port `hostname` 9092 | sed -r "s/.*:(.*)/\1/g")
+    #PORT0 should be the port that marathon assigned to this container
+    export KAFKA_ADVERTISED_PORT=$(docker port `hostname` $PORT0 | sed -r "s/.*:(.*)/\1/g")
+fi
+if [[ -z "$KAFKA_ADVERTISED_HOST" ]]; then
+    #$HOST should be the hostname of this docker host
+    export KAFKA_ADVERTISED_HOST=$HOST
 fi
 if [[ -z "$KAFKA_BROKER_ID" ]]; then
+    #ensure advertised ports are globally unique when running multiple brokers
     export KAFKA_BROKER_ID=$KAFKA_ADVERTISED_PORT
 fi
 if [[ -z "$KAFKA_LOG_DIRS" ]]; then
