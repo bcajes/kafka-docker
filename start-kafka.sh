@@ -3,7 +3,7 @@
 
 if [[ -z "$KAFKA_ADVERTISED_PORT" ]]; then
     #PORT0 should be the port that marathon assigned to this container
-    export KAFKA_ADVERTISED_PORT=$(docker port `hostname` $PORT0 | sed -r "s/.*:(.*)/\1/g")
+    export KAFKA_ADVERTISED_PORT=$PORT0
 fi
 if [[ -z "$KAFKA_ADVERTISED_HOST" ]]; then
     #$HOST should be the hostname of this docker host
