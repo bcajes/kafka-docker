@@ -4,14 +4,19 @@
 if [[ -z "$KAFKA_ADVERTISED_PORT" ]]; then
     #PORT0 should be the port that marathon assigned to this container
     export KAFKA_ADVERTISED_PORT=$PORT0
+    echo "PORT0: $PORT0"
+    echo "PORT1: $PORT1"
 fi
-if [[ -z "$KAFKA_ADVERTISED_HOST" ]]; then
+if [[ -z "$KAFKA_ADVERTISED_HOST_NAME" ]]; then
     #$HOST should be the hostname of this docker host
-    export KAFKA_ADVERTISED_HOST=$HOST
+    export KAFKA_ADVERTISED_HOST_NAME=$HOST
+    echo "ADVERTISED_HOST: $KAFKA_ADVERTISED_HOST_NAME"
 fi
 if [[ -z "$KAFKA_BROKER_ID" ]]; then
-    #ensure advertised ports are globally unique when running multiple brokers
-    export KAFKA_BROKER_ID=$KAFKA_ADVERTISED_PORT
+    #ensure advertised ports are globally unique when running multiple brokers    
+    #we are assuming here that HOST contains integers differentiating it from other node in the cluster
+    export KAFKA_BROKER_ID=$(echo $HOST|sed 's/[^0-9]//g')
+    echo "BROKER_ID: $KAFKA_BROKER_ID"
 fi
 if [[ -z "$KAFKA_LOG_DIRS" ]]; then
     export KAFKA_LOG_DIRS="/kafka/kafka-logs-$KAFKA_BROKER_ID"
@@ -37,5 +42,5 @@ do
     fi
   fi
 done
-
+echo "KAFKA_BROKER_ID is $KAFKA_BROKER_ID"
 $KAFKA_HOME/bin/kafka-server-start.sh $KAFKA_HOME/config/server.properties
